@@ -27,7 +27,11 @@ public class Application {
 				int tempHourDuration = Integer.parseInt(scanner.nextLine());
 				System.out.println("minute...");
 				int tempMinuteDuration = Integer.parseInt(scanner.nextLine());
-				cinema.addMovie(new Movie(tempNameOfMovie, new Time(tempHourDuration, tempMinuteDuration)));
+				
+				Time testTime = new Time(tempHourDuration, tempMinuteDuration);
+				Time.timeSettings(testTime);
+				
+				cinema.addMovie(new Movie(tempNameOfMovie, testTime));
 				break;
 
 			case "2":
