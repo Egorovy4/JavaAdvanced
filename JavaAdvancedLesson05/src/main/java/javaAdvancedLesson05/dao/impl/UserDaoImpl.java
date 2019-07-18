@@ -21,10 +21,9 @@ public class UserDaoImpl implements UserDao {
 
 	@Override
 	public User create(User user) {
-		try {
-			Connection connection = ConnectionUtils.openConnection();
-			PreparedStatement preparedStatement = connection.prepareStatement(CREATE, Statement.RETURN_GENERATED_KEYS);
-			
+		try (Connection connection = ConnectionUtils.openConnection();
+				PreparedStatement preparedStatement = connection.prepareStatement(CREATE,
+						Statement.RETURN_GENERATED_KEYS);) {
 			preparedStatement.setString(1, user.getFirstName());
 			preparedStatement.setString(2, user.getLastName());
 			preparedStatement.setString(3, user.getEmail());
@@ -35,9 +34,8 @@ public class UserDaoImpl implements UserDao {
 			ResultSet resultSet = preparedStatement.getGeneratedKeys();
 			resultSet.next();
 			user.setId(resultSet.getInt(1));
-			
-			preparedStatement.close();
-			connection.close();
+
+			resultSet.close();
 		} catch (SQLException | InstantiationException | IllegalAccessException | ClassNotFoundException e) {
 			e.printStackTrace();
 		}
@@ -47,10 +45,9 @@ public class UserDaoImpl implements UserDao {
 	@Override
 	public User read(Integer id) {
 		User user = null;
-		try {
-			Connection connection = ConnectionUtils.openConnection();			
-			PreparedStatement preparedStatement = connection.prepareStatement(READ_BY_ID);
-			
+		try (Connection connection = ConnectionUtils.openConnection();
+				PreparedStatement preparedStatement = connection.prepareStatement(READ_BY_ID);) {
+
 			preparedStatement.setInt(1, id);
 			ResultSet resultSet = preparedStatement.executeQuery();
 			resultSet.next();
@@ -63,9 +60,8 @@ public class UserDaoImpl implements UserDao {
 			String role = resultSet.getString("role");
 
 			user = new User(userId, firstName, lastName, email, age, role);
-			
-			preparedStatement.close();
-			connection.close();
+
+			resultSet.close();
 		} catch (SQLException | InstantiationException | IllegalAccessException | ClassNotFoundException e) {
 			e.printStackTrace();
 		}
@@ -74,9 +70,8 @@ public class UserDaoImpl implements UserDao {
 
 	@Override
 	public User update(User user) {
-		try {
-			Connection connection = ConnectionUtils.openConnection();
-			PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_BY_ID);
+		try (Connection connection = ConnectionUtils.openConnection();
+				PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_BY_ID);) {
 
 			preparedStatement.setString(1, user.getFirstName());
 			preparedStatement.setString(2, user.getLastName());
@@ -85,9 +80,6 @@ public class UserDaoImpl implements UserDao {
 			preparedStatement.setString(5, user.getRole());
 			preparedStatement.setInt(6, user.getId());
 			preparedStatement.executeUpdate();
-			
-			preparedStatement.close();
-			connection.close();
 		} catch (SQLException | InstantiationException | IllegalAccessException | ClassNotFoundException e) {
 			e.printStackTrace();
 		}
@@ -96,15 +88,10 @@ public class UserDaoImpl implements UserDao {
 
 	@Override
 	public void delete(Integer id) {
-		try {
-			Connection connection = ConnectionUtils.openConnection();
-			PreparedStatement preparedStatement = connection.prepareStatement(DELETE_BY_ID);
-			
+		try (Connection connection = ConnectionUtils.openConnection();
+				PreparedStatement preparedStatement = connection.prepareStatement(DELETE_BY_ID);) {
 			preparedStatement.setInt(1, id);
 			preparedStatement.executeUpdate();
-			
-			preparedStatement.close();
-			connection.close();
 		} catch (SQLException | InstantiationException | IllegalAccessException | ClassNotFoundException e) {
 			e.printStackTrace();
 		}
@@ -113,10 +100,9 @@ public class UserDaoImpl implements UserDao {
 	@Override
 	public List<User> readAll() {
 		List<User> userList = new ArrayList<>();
-		try {
-			Connection connection = ConnectionUtils.openConnection();
-			PreparedStatement preparedStatement = connection.prepareStatement(READ_ALL);
-			
+		try (Connection connection = ConnectionUtils.openConnection();
+				PreparedStatement preparedStatement = connection.prepareStatement(READ_ALL);) {
+
 			ResultSet resultSet = preparedStatement.executeQuery();
 
 			while (resultSet.next()) {
@@ -124,9 +110,7 @@ public class UserDaoImpl implements UserDao {
 						resultSet.getString("last_name"), resultSet.getString("email"), resultSet.getInt("age"),
 						resultSet.getString("role")));
 			}
-			
-			preparedStatement.close();
-			connection.close();
+			resultSet.close();
 		} catch (SQLException | InstantiationException | IllegalAccessException | ClassNotFoundException e) {
 			e.printStackTrace();
 		}
