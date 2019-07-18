@@ -1,27 +1,22 @@
 package javaAdvancedLesson05.service.impl;
 
-import java.sql.SQLException;
 import java.util.List;
 
 import javaAdvancedLesson05.dao.UserDao;
+import javaAdvancedLesson05.dao.impl.UserDaoImpl;
 import javaAdvancedLesson05.domain.User;
-import javaAdvancedLesson05.impl.UserDaoImpl;
 import javaAdvancedLesson05.service.UserService;
 
 public class UserServiceImpl implements UserService {
 	private UserDao userDao;
 	
 	public UserServiceImpl() {
-		try {
-			userDao = new UserDaoImpl();
-		} catch (InstantiationException | IllegalAccessException | ClassNotFoundException | SQLException e) {
-			e.printStackTrace();
-		}
+		userDao = new UserDaoImpl();
 	}
 
 	@Override
-	public User cteate(User user) {
-		return userDao.cteate(user);
+	public User create(User user) {
+		return userDao.create(user);
 	}
 
 	@Override

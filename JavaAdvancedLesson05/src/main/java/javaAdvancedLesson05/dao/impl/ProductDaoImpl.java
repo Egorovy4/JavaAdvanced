@@ -1,4 +1,4 @@
-package javaAdvancedLesson05.impl;
+package javaAdvancedLesson05.dao.impl;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -13,15 +13,6 @@ import javaAdvancedLesson05.domain.Product;
 import javaAdvancedLesson05.utils.ConnectionUtils;
 
 public class ProductDaoImpl implements ProductDao {
-
-	private Connection connection;
-	private PreparedStatement preparedStatement;
-
-	public ProductDaoImpl()
-			throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
-		connection = ConnectionUtils.openConnection();
-	}
-
 	private static String CREATE = "insert into product(`name`, `description`, `price`) values (?,?,?)";
 	private static String READ_BY_ID = "select * from product where id = ?";
 	private static String UPDATE_BY_ID = "update product set name = ?, description = ?, price = ? where id = ?";
@@ -29,9 +20,11 @@ public class ProductDaoImpl implements ProductDao {
 	private static String READ_ALL = "select * from product";
 
 	@Override
-	public Product cteate(Product product) {
+	public Product create(Product product) {
 		try {
-			preparedStatement = connection.prepareStatement(CREATE, Statement.RETURN_GENERATED_KEYS);
+			Connection connection = ConnectionUtils.openConnection();
+			PreparedStatement preparedStatement = connection.prepareStatement(CREATE, Statement.RETURN_GENERATED_KEYS);
+			
 			preparedStatement.setString(1, product.getName());
 			preparedStatement.setString(2, product.getDescription());
 			preparedStatement.setDouble(3, product.getPrice());
@@ -40,7 +33,10 @@ public class ProductDaoImpl implements ProductDao {
 			ResultSet resultSet = preparedStatement.getGeneratedKeys();
 			resultSet.next();
 			product.setId(resultSet.getInt(1));
-		} catch (SQLException e) {
+			
+			preparedStatement.close();
+			connection.close();
+		} catch (SQLException | InstantiationException | IllegalAccessException | ClassNotFoundException e) {
 			e.printStackTrace();
 		}
 		return product;
@@ -50,7 +46,9 @@ public class ProductDaoImpl implements ProductDao {
 	public Product read(Integer id) {
 		Product product = null;
 		try {
-			preparedStatement = connection.prepareStatement(READ_BY_ID);
+			Connection connection = ConnectionUtils.openConnection();
+			PreparedStatement preparedStatement = connection.prepareStatement(READ_BY_ID);
+			
 			preparedStatement.setInt(1, id);
 			ResultSet resultSet = preparedStatement.executeQuery();
 			resultSet.next();
@@ -61,7 +59,10 @@ public class ProductDaoImpl implements ProductDao {
 			Double price = resultSet.getDouble("price");
 
 			product = new Product(productId, name, description, price);
-		} catch (SQLException e) {
+			
+			preparedStatement.close();
+			connection.close();
+		} catch (SQLException | InstantiationException | IllegalAccessException | ClassNotFoundException e) {
 			e.printStackTrace();
 		}
 		return product;
@@ -70,14 +71,18 @@ public class ProductDaoImpl implements ProductDao {
 	@Override
 	public Product update(Product product) {
 		try {
-			preparedStatement = connection.prepareStatement(UPDATE_BY_ID);
+			Connection connection = ConnectionUtils.openConnection();
+			PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_BY_ID);
 
 			preparedStatement.setString(1, product.getName());
 			preparedStatement.setString(2, product.getDescription());
 			preparedStatement.setDouble(3, product.getPrice());
 			preparedStatement.setInt(4, product.getId());
 			preparedStatement.executeUpdate();
-		} catch (SQLException e) {
+			
+			preparedStatement.close();
+			connection.close();
+		} catch (SQLException | InstantiationException | IllegalAccessException | ClassNotFoundException e) {
 			e.printStackTrace();
 		}
 		return product;
@@ -86,10 +91,15 @@ public class ProductDaoImpl implements ProductDao {
 	@Override
 	public void delete(Integer id) {
 		try {
-			preparedStatement = connection.prepareStatement(DELETE_BY_ID);
+			Connection connection = ConnectionUtils.openConnection();
+			PreparedStatement preparedStatement = connection.prepareStatement(DELETE_BY_ID);
+			
 			preparedStatement.setInt(1, id);
 			preparedStatement.executeUpdate();
-		} catch (SQLException e) {
+			
+			preparedStatement.close();
+			connection.close();
+		} catch (SQLException | InstantiationException | IllegalAccessException | ClassNotFoundException e) {
 			e.printStackTrace();
 		}
 	}
@@ -98,14 +108,19 @@ public class ProductDaoImpl implements ProductDao {
 	public List<Product> readAll() {
 		List<Product> productList = new ArrayList<>();
 		try {
-			preparedStatement = connection.prepareStatement(READ_ALL);
+			Connection connection = ConnectionUtils.openConnection();
+			PreparedStatement preparedStatement = connection.prepareStatement(READ_ALL);
+			
 			ResultSet resultSet = preparedStatement.executeQuery();
 
 			while (resultSet.next()) {
 				productList.add(new Product(resultSet.getInt("id"), resultSet.getString("name"),
 						resultSet.getString("description"), resultSet.getDouble("price")));
 			}
-		} catch (SQLException e) {
+			
+			preparedStatement.close();
+			connection.close();
+		} catch (SQLException | InstantiationException | IllegalAccessException | ClassNotFoundException e) {
 			e.printStackTrace();
 		}
 		return productList;

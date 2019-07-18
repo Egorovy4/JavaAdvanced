@@ -1,4 +1,4 @@
-package javaAdvancedLesson05.impl;
+package javaAdvancedLesson05.dao.impl;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -13,14 +13,6 @@ import javaAdvancedLesson05.domain.User;
 import javaAdvancedLesson05.utils.ConnectionUtils;
 
 public class UserDaoImpl implements UserDao {
-
-	private Connection connection;
-	private PreparedStatement preparedStatement;
-
-	public UserDaoImpl() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
-		connection = ConnectionUtils.openConnection();
-	}
-
 	private static String CREATE = "insert into user(`first_name`, `last_name`, `email`, `age`, `role`) values (?,?,?,?,?)";
 	private static String READ_BY_ID = "select * from user where id = ?";
 	private static String UPDATE_BY_ID = "update user set first_name = ?, last_name = ?, email = ?, age = ?, role = ? where id = ?";
@@ -28,9 +20,11 @@ public class UserDaoImpl implements UserDao {
 	private static String READ_ALL = "select * from user";
 
 	@Override
-	public User cteate(User user) {
+	public User create(User user) {
 		try {
-			preparedStatement = connection.prepareStatement(CREATE, Statement.RETURN_GENERATED_KEYS);
+			Connection connection = ConnectionUtils.openConnection();
+			PreparedStatement preparedStatement = connection.prepareStatement(CREATE, Statement.RETURN_GENERATED_KEYS);
+			
 			preparedStatement.setString(1, user.getFirstName());
 			preparedStatement.setString(2, user.getLastName());
 			preparedStatement.setString(3, user.getEmail());
@@ -41,7 +35,10 @@ public class UserDaoImpl implements UserDao {
 			ResultSet resultSet = preparedStatement.getGeneratedKeys();
 			resultSet.next();
 			user.setId(resultSet.getInt(1));
-		} catch (SQLException e) {
+			
+			preparedStatement.close();
+			connection.close();
+		} catch (SQLException | InstantiationException | IllegalAccessException | ClassNotFoundException e) {
 			e.printStackTrace();
 		}
 		return user;
@@ -51,7 +48,9 @@ public class UserDaoImpl implements UserDao {
 	public User read(Integer id) {
 		User user = null;
 		try {
-			preparedStatement = connection.prepareStatement(READ_BY_ID);
+			Connection connection = ConnectionUtils.openConnection();			
+			PreparedStatement preparedStatement = connection.prepareStatement(READ_BY_ID);
+			
 			preparedStatement.setInt(1, id);
 			ResultSet resultSet = preparedStatement.executeQuery();
 			resultSet.next();
@@ -64,7 +63,10 @@ public class UserDaoImpl implements UserDao {
 			String role = resultSet.getString("role");
 
 			user = new User(userId, firstName, lastName, email, age, role);
-		} catch (SQLException e) {
+			
+			preparedStatement.close();
+			connection.close();
+		} catch (SQLException | InstantiationException | IllegalAccessException | ClassNotFoundException e) {
 			e.printStackTrace();
 		}
 		return user;
@@ -73,7 +75,8 @@ public class UserDaoImpl implements UserDao {
 	@Override
 	public User update(User user) {
 		try {
-			preparedStatement = connection.prepareStatement(UPDATE_BY_ID);
+			Connection connection = ConnectionUtils.openConnection();
+			PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_BY_ID);
 
 			preparedStatement.setString(1, user.getFirstName());
 			preparedStatement.setString(2, user.getLastName());
@@ -82,7 +85,10 @@ public class UserDaoImpl implements UserDao {
 			preparedStatement.setString(5, user.getRole());
 			preparedStatement.setInt(6, user.getId());
 			preparedStatement.executeUpdate();
-		} catch (SQLException e) {
+			
+			preparedStatement.close();
+			connection.close();
+		} catch (SQLException | InstantiationException | IllegalAccessException | ClassNotFoundException e) {
 			e.printStackTrace();
 		}
 		return user;
@@ -91,10 +97,15 @@ public class UserDaoImpl implements UserDao {
 	@Override
 	public void delete(Integer id) {
 		try {
-			preparedStatement = connection.prepareStatement(DELETE_BY_ID);
+			Connection connection = ConnectionUtils.openConnection();
+			PreparedStatement preparedStatement = connection.prepareStatement(DELETE_BY_ID);
+			
 			preparedStatement.setInt(1, id);
 			preparedStatement.executeUpdate();
-		} catch (SQLException e) {
+			
+			preparedStatement.close();
+			connection.close();
+		} catch (SQLException | InstantiationException | IllegalAccessException | ClassNotFoundException e) {
 			e.printStackTrace();
 		}
 	}
@@ -103,7 +114,9 @@ public class UserDaoImpl implements UserDao {
 	public List<User> readAll() {
 		List<User> userList = new ArrayList<>();
 		try {
-			preparedStatement = connection.prepareStatement(READ_ALL);
+			Connection connection = ConnectionUtils.openConnection();
+			PreparedStatement preparedStatement = connection.prepareStatement(READ_ALL);
+			
 			ResultSet resultSet = preparedStatement.executeQuery();
 
 			while (resultSet.next()) {
@@ -111,7 +124,10 @@ public class UserDaoImpl implements UserDao {
 						resultSet.getString("last_name"), resultSet.getString("email"), resultSet.getInt("age"),
 						resultSet.getString("role")));
 			}
-		} catch (SQLException e) {
+			
+			preparedStatement.close();
+			connection.close();
+		} catch (SQLException | InstantiationException | IllegalAccessException | ClassNotFoundException e) {
 			e.printStackTrace();
 		}
 		return userList;

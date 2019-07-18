@@ -1,27 +1,22 @@
 package javaAdvancedLesson05.service.impl;
 
-import java.sql.SQLException;
 import java.util.List;
 
 import javaAdvancedLesson05.dao.ProductDao;
+import javaAdvancedLesson05.dao.impl.ProductDaoImpl;
 import javaAdvancedLesson05.domain.Product;
-import javaAdvancedLesson05.impl.ProductDaoImpl;
 import javaAdvancedLesson05.service.ProductService;
 
 public class ProductServiceImpl implements ProductService {
 	private ProductDao productDao;
 	
 	public ProductServiceImpl() {
-		try {
-			productDao = new ProductDaoImpl();
-		} catch (InstantiationException | IllegalAccessException | ClassNotFoundException | SQLException e) {
-			e.printStackTrace();
-		}
+		productDao = new ProductDaoImpl();
 	}
 
 	@Override
-	public Product cteate(Product product) {
-		return productDao.cteate(product);
+	public Product create(Product product) {
+		return productDao.create(product);
 	}
 
 	@Override

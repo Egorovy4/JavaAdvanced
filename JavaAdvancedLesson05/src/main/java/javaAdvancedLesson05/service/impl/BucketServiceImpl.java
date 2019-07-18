@@ -1,27 +1,22 @@
 package javaAdvancedLesson05.service.impl;
 
-import java.sql.SQLException;
 import java.util.List;
 
 import javaAdvancedLesson05.dao.BucketDao;
+import javaAdvancedLesson05.dao.impl.BucketDaoImpl;
 import javaAdvancedLesson05.domain.Bucket;
-import javaAdvancedLesson05.impl.BucketDaoImpl;
 import javaAdvancedLesson05.service.BucketService;
 
 public class BucketServiceImpl implements BucketService {
 	private BucketDao bucketDao;
 
 	public BucketServiceImpl() {
-		try {
-			bucketDao = new BucketDaoImpl();
-		} catch (InstantiationException | IllegalAccessException | ClassNotFoundException | SQLException e) {
-			e.printStackTrace();
-		}
+		bucketDao = new BucketDaoImpl();
 	}
 
 	@Override
-	public Bucket cteate(Bucket bucket) {
-		return bucketDao.cteate(bucket);
+	public Bucket create(Bucket bucket) {
+		return bucketDao.create(bucket);
 	}
 
 	@Override

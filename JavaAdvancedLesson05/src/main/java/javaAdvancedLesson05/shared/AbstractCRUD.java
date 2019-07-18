@@ -3,7 +3,7 @@ package javaAdvancedLesson05.shared;
 import java.util.List;
 
 public interface AbstractCRUD<T> {
-	T cteate(T t);
+	T create(T t);
 
 	T read(Integer id);
 
