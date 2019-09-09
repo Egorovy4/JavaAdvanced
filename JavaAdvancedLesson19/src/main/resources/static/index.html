@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<meta charset="UTF-8">
+<title>Lesson19</title>
+</head>
+
+<body>
+	<div>
+		<h3>Student Registration</h3>
+
+		<form id="registrationForm" name="registrationForm">
+			<label>First Name<br> <input id="firstName" type="text" name="firstName"></label>
+			<br>
+			<label>Last Name<br> <input id="lastName" type="text" name="lastName"></label>	
+			<br>
+			<label>Age<br> <input type="number" id="age" name="age"></label>
+			<br><br>
+			<input id="singleFileUploadInput" type="file" name="file" required />
+			<button type="submit">Submit</button>
+		</form>
+
+		<div>
+			<div id="singleFileUploadError"></div>
+			<div id="singleFileUploadSuccess"></div>
+		</div>
+	</div>
+	<script src="/js/main.js"></script>
+</body>
+
+</html>
